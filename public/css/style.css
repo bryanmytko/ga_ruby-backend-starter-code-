@@ -1,0 +1,18 @@
+body { background: #fcf8e3; }
+.main-container { padding: 30px; width: 640px; margin: 0 auto }
+form.movie-search-form { margin: 20px 0 }
+
+ul#search-results-list { list-style-type: none; margin: 0; padding: 0 }
+ul#search-results-list h2 {
+  color: #AB6A38;
+  font-size: 16px;
+  border: 1px solid #AB6A38;
+  border-radius: 6px;
+  padding: 12px;
+  background: #fff
+}
+
+ul#search-results-list li.expandable { cursor: pointer }
+ul#search-results-list li.expandable.open div.data { display: block }
+ul#search-results-list li.expandable.closed div.data { display: none }
+ul#search-results-list li div.data { padding: 16px }
