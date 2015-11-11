@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", function(){
-  /* @TODO Add cookie w/ token; check for token to lookup favorites */
+  /* Use cookie to remember the user */
+  if(!document.cookie){
+    var date = new Date();
+    document.cookie="user_id=" + Math.random().toString(36).substring(7) + date.toISOString();
+  }
 
   var search_uri = "/search";
   var favorites_uri = "/favorites";
@@ -11,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function(){
   var search_results = document.getElementById("search-results-list");
   var expandable = document.getElementsByClassName("expandable");
 
-  var user_id = '12345'; // temp
+  var user_id = document.cookie;
 
   /* Display Data */
   var error_no_results = "<p class=\"error\">No results found.</p>";
@@ -32,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function(){
     var xhr = new XMLHttpRequest();
     var keyword = encodeURI(keyword);
 
-    xhr.open("GET", search_uri + ".json?keyword=" + keyword, true);
+    xhr.open("GET", search_uri + ".json?keyword=" + keyword + "&user_id=" + user_id, true);
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
         if (xhr.status == 200) {
@@ -59,6 +63,14 @@ document.addEventListener("DOMContentLoaded", function(){
     xhr.send();
   }
 
+  function is_favorited(data){
+    if(data.Favorite == true){
+      return "checked";
+    } else {
+      return "";
+    }
+  }
+
   function populate_results(data){
     search_results.innerHTML = ""; //clear old results
 
@@ -70,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function(){
         var title = data[i].Title;
 
         el.className = "expandable closed";
-        el.innerHTML = "<div class=\"star\"></div>";
+        el.innerHTML = "<div class=\"star " + is_favorited(data[i]) + "\" id=\"" + data[i].imdbID + "\"></div>";
         el.innerHTML += "<h2>" + title + "</h2>";
 
         /* The API doesn't return the same data for search queries and
@@ -82,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
         el.onclick = function(e){
           if(e.target.className.indexOf("star") != -1){
-            toggle_favorite(data, e.target);
+            toggle_favorite(e.target);
           } else {
             toggle(this);
           }
@@ -123,20 +135,23 @@ document.addEventListener("DOMContentLoaded", function(){
     }
   }
 
-  function toggle_favorite(data, el){
+  function toggle_favorite(el){
+    if(!el.classList.contains("checked")){
+      var xhr = new XMLHttpRequest();
 
-    var xhr = new XMLHttpRequest();
-
-    xhr.open("PATCH", favorites_uri, true);
-    xhr.onreadystatechange = function(){
-      if (xhr.readyState == 4) {
-        if (xhr.status == 200) {
-          el.className = "star checked";
+      xhr.open("POST", favorites_uri, true);
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhr.onreadystatechange = function(){
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            el.className = "star checked";
+          }
         }
-      }
-    };
+      };
 
-    xhr.send(encodeURI("data=" + data + "user_id=" + user_id));
+      xhr.send(encodeURI("imdb_id=" + el.id + "&user_id=" + user_id));
+    }
+
     // This should actually allow toggling to also remove favorites, but with
     // data being persisted in flat file that's not trivial and the API doesn't
     // currently support it.
