@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", function(){
+  /* @TODO Add cookie w/ token; check for token to lookup favorites */
+
   var search_uri = "/search.json";
 
   /* DOM Elements */
@@ -45,7 +47,8 @@ document.addEventListener("DOMContentLoaded", function(){
         var title = data_collection[i].Title;
 
         el.className = "expandable closed";
-        el.innerHTML = "<h2>" + title + "</h2>";
+        el.innerHTML = "<div class=\"star\"></div>";
+        el.innerHTML += "<h2>" + title + "</h2>";
 
         /* The API doesn't return the same data for search queries and
          * title searches, so we have to make a title search for each
@@ -55,7 +58,13 @@ document.addEventListener("DOMContentLoaded", function(){
         search_results.appendChild(el);
 
         el.onclick = function(e){
-          toggle(this);
+          if(e.target.className.indexOf("star") != -1){
+            toggle_favorite(e.target);
+          } else {
+            toggle(this);
+          }
+
+          e.preventDefault();
         }
       }
     }
@@ -88,6 +97,15 @@ document.addEventListener("DOMContentLoaded", function(){
       el.className = "expandable closed";
     } else {
       el.className = "expandable open";
+    }
+  }
+
+  function toggle_favorite(el){
+    /* @TODO Add API Calls to add/remove favorite */
+    if(el.classList.contains("checked")){
+      el.className = "star";
+    } else {
+      el.className = "star checked";
     }
   }
 });
