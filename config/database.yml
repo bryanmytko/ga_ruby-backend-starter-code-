@@ -1,0 +1,27 @@
+development:
+  adapter: postgresql
+  encoding: utf8
+  database: movies_development
+  pool: 100
+  timeout: 5000
+  password:
+  host:
+
+test:
+  adapter: postgresql
+  encoding: utf8
+  database: movies_test
+  pool: 5
+  timeout: 5000
+  password:
+  host:
+
+production:
+  adapter: postgresql
+  encoding: utf8
+  pool: 5
+
+default: &default
+  adapter: postgresql
+  encoding: utf8
+  pool: 5
