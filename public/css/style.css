@@ -13,7 +13,22 @@ ul#search-results-list h2 {
   background: #fff
 }
 
+ul#search-results-list li { position: relative }
 ul#search-results-list li.expandable { cursor: pointer }
 ul#search-results-list li.expandable.open div.data { display: block }
 ul#search-results-list li.expandable.closed div.data { display: none }
 ul#search-results-list li div.data { padding: 16px }
+
+div.star {
+  background: url(../img/stars.png) right 0 no-repeat;
+  width: 16px;
+  height: 16px;
+  z-index: 2;
+  position: absolute;
+  right: 14px;
+  top: 14px;
+}
+
+div.star.checked {
+  background-position: 0 0;
+}
