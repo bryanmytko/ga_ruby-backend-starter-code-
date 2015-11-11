@@ -1,3 +1,7 @@
+## Live Demo
+http://damp-basin-9700.herokuapp.com/
+
+
 ![GA Logo](https://raw.github.com/generalassembly/ga-ruby-on-rails-for-devs/master/images/ga.png)
 
 ## WDI Instructor Code Challenge
