@@ -19,6 +19,12 @@ module Sinatra
         query = API_URL + "?apikey=#{API_KEY}&t=#{title}&y=&plot=short&r=json"
         self.class.get query
       end
+
+      def search_by_id(imdb_id)
+        title = CGI.escape(imdb_id)
+        query = API_URL + "?apikey=#{API_KEY}&i=#{imdb_id}&y=&plot=short&r=json"
+        self.class.get query
+      end
     end
   end
 end
