@@ -11,6 +11,7 @@ get "/" do
   File.read(File.join("views", "index.html"))
 end
 
+# A generic search API to keep the Javascript cleaner
 get "/search.json" do
   content_type :json
   client = Sinatra::Omdb::Client.new
@@ -20,6 +21,8 @@ get "/search.json" do
   elsif keyword = params[:keyword]
     response = client.search_by_keyword(keyword)
 
+    # Loop to determine if the search result was already favorited.
+    # Inject data if it has been.
     response["Search"].each do |r|
       if Favorite.find_by(imdb_id: r["imdbID"], user_id: params[:user_id])
         r["Favorite"] = true;
@@ -30,6 +33,7 @@ get "/search.json" do
   response.to_json
 end
 
+# An endpoint to fetch a user's favorite movies
 get "/favorites.json" do
   client = Sinatra::Omdb::Client.new
   response.header["Content-Type"] = "application/json"
@@ -45,6 +49,7 @@ get "/favorites.json" do
   response.to_json
 end
 
+# This should maybe technically be PUT/PATCH but 'vanilla' JS has iffy support
 post "/favorites" do
   Favorite.create(
     user_id: params[:user_id],
@@ -52,4 +57,5 @@ post "/favorites" do
   )
 end
 
+# Define our ActiveRecord Favorite class
 class Favorite < ActiveRecord::Base; end

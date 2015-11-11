@@ -5,6 +5,9 @@ document.addEventListener("DOMContentLoaded", function(){
     document.cookie="user_id=" + Math.random().toString(36).substring(7) + date.toISOString();
   }
 
+  var user_id = document.cookie;
+
+  /* Endpoints */
   var search_uri = "/search";
   var favorites_uri = "/favorites";
 
@@ -14,8 +17,6 @@ document.addEventListener("DOMContentLoaded", function(){
   var query = document.getElementById("movie-search-query");
   var search_results = document.getElementById("search-results-list");
   var expandable = document.getElementsByClassName("expandable");
-
-  var user_id = document.cookie;
 
   /* Display Data */
   var error_no_results = "<p class=\"error\">No results found.</p>";
@@ -31,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function(){
     e.preventDefault();
   }
 
-  /* @TODO Similar functionality, need to DRY out */
+  /* @TODO The following two functions have similar functionality, need to DRY out */
   function search_by_keyword(keyword){
     var xhr = new XMLHttpRequest();
     var keyword = encodeURI(keyword);
@@ -152,14 +153,15 @@ document.addEventListener("DOMContentLoaded", function(){
       xhr.send(encodeURI("imdb_id=" + el.id + "&user_id=" + user_id));
     }
 
-    // This should actually allow toggling to also remove favorites, but with
-    // data being persisted in flat file that's not trivial and the API doesn't
-    // currently support it.
+    // This should actually allow toggling to also remove favorites, but the
+    // Sinatra API doesn't currently support it.
     //
     // if(el.classList.contains("checked")){
     //   el.className = "star";
+    //   // add to favorites
     // } else {
     //   el.className = "star checked";
+    //   // unfavorite
     // }
   }
 });
