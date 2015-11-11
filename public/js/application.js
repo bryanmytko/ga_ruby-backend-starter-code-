@@ -73,10 +73,10 @@ document.addEventListener("DOMContentLoaded", function(){
 
           el.innerHTML += "<div class=\"data\">";
           data_container = el.getElementsByClassName("data")[0];
-          data_container.innerHTML += "<p>Released: " + data.Released + "</p>";
-          data_container.innerHTML += "<p>Genre: " + data.Genre + "</p>";
-          data_container.innerHTML += "<p>Actors: " + data.Actors + "</p>";
-          data_container.innerHTML += "<p>Plot: " + data.Plot + "</p>";
+          data_container.innerHTML += "<p><strong>Released:</strong> " + data.Released + "</p>";
+          data_container.innerHTML += "<p><strong>Genre:</strong> " + data.Genre + "</p>";
+          data_container.innerHTML += "<p><strong>Actors:</strong> " + data.Actors + "</p>";
+          data_container.innerHTML += "<p><strong>Plot:</strong> " + data.Plot + "</p>";
         }
       }
     };
