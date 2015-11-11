@@ -1,9 +1,11 @@
 require "sinatra"
+require "sinatra/activerecord"
 require "byebug"
 require "httparty"
 require "cgi"
 require "json"
 require "./lib/omdb"
+require "./environments"
 
 get "/" do
   File.read(File.join("views", "index.html"))
@@ -22,16 +24,17 @@ get "/search.json" do
   response.to_json
 end
 
-get "favorites" do
+get "/favorites.json" do
   response.header["Content-Type"] = "application/json"
   File.read("data.json")
 end
 
 patch "/favorites" do
+  byebug
   file = JSON.parse(File.read("data.json"))
   return "Invalid Request" unless params[:name] && params[:oid]
   movie = { name: params[:name], oid: params[:oid] }
   file << movie
-  File.write("data.json",JSON.pretty_generate(file))
+  File.write("data.json", JSON.pretty_generate(file))
   movie.to_json
 end
