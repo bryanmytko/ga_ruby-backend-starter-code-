@@ -1,28 +1,53 @@
 document.addEventListener("DOMContentLoaded", function(){
   /* @TODO Add cookie w/ token; check for token to lookup favorites */
 
-  var search_uri = "/search.json";
+  var search_uri = "/search";
+  var favorites_uri = "/favorites";
 
   /* DOM Elements */
   var movie_search_form = document.getElementById("movie-search-form");
+  var see_favorites_button = document.getElementById("see-favorites");
   var query = document.getElementById("movie-search-query");
   var search_results = document.getElementById("search-results-list");
   var expandable = document.getElementsByClassName("expandable");
+
+  var user_id = '12345'; // temp
 
   /* Display Data */
   var error_no_results = "<p class=\"error\">No results found.</p>";
 
   /* Events */
-  movie_search_form.addEventListener("submit", function(e){
+  movie_search_form.onsubmit = function(e){
     search_by_keyword(query.value);
     e.preventDefault();
-  });
+  }
 
+  see_favorites_button.onclick = function(e){
+    show_favorites(user_id);
+    e.preventDefault();
+  }
+
+  /* @TODO Similar functionality, need to DRY out */
   function search_by_keyword(keyword){
     var xhr = new XMLHttpRequest();
     var keyword = encodeURI(keyword);
 
-    xhr.open("GET", search_uri + "?keyword=" + keyword, true);
+    xhr.open("GET", search_uri + ".json?keyword=" + keyword, true);
+    xhr.onreadystatechange = function(){
+      if (xhr.readyState == 4) {
+        if (xhr.status == 200) {
+          data = JSON.parse(xhr.responseText);
+          populate_results(data.Search);
+        }
+      }
+    };
+    xhr.send();
+  }
+
+  function show_favorites(user_id){
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("GET", favorites_uri + ".json?user_id=" + user_id, true);
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
         if (xhr.status == 200) {
@@ -37,14 +62,12 @@ document.addEventListener("DOMContentLoaded", function(){
   function populate_results(data){
     search_results.innerHTML = ""; //clear old results
 
-    data_collection = data.Search;
-
-    if(data_collection === undefined){
+    if(data === undefined){
       search_results.innerHTML = error_no_results;
     } else {
-      for(var i = 0; i < data_collection.length - 1; i++){
+      for(var i = 0; i < data.length; i++){
         var el = document.createElement("li");
-        var title = data_collection[i].Title;
+        var title = data[i].Title;
 
         el.className = "expandable closed";
         el.innerHTML = "<div class=\"star\"></div>";
@@ -59,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
         el.onclick = function(e){
           if(e.target.className.indexOf("star") != -1){
-            toggle_favorite(e.target);
+            toggle_favorite(data, e.target);
           } else {
             toggle(this);
           }
@@ -74,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function(){
     var xhr = new XMLHttpRequest();
     var title = encodeURI(title);
 
-    xhr.open("GET", search_uri + "?title=" + title, true);
+    xhr.open("GET", search_uri + ".json?title=" + title, true);
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
         if (xhr.status == 200) {
@@ -100,12 +123,28 @@ document.addEventListener("DOMContentLoaded", function(){
     }
   }
 
-  function toggle_favorite(el){
-    /* @TODO Add API Calls to add/remove favorite */
-    if(el.classList.contains("checked")){
-      el.className = "star";
-    } else {
-      el.className = "star checked";
-    }
+  function toggle_favorite(data, el){
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("PATCH", favorites_uri, true);
+    xhr.onreadystatechange = function(){
+      if (xhr.readyState == 4) {
+        if (xhr.status == 200) {
+          el.className = "star checked";
+        }
+      }
+    };
+
+    xhr.send(encodeURI("data=" + data + "user_id=" + user_id));
+    // This should actually allow toggling to also remove favorites, but with
+    // data being persisted in flat file that's not trivial and the API doesn't
+    // currently support it.
+    //
+    // if(el.classList.contains("checked")){
+    //   el.className = "star";
+    // } else {
+    //   el.className = "star checked";
+    // }
   }
 });

@@ -3,6 +3,9 @@ h1 { color: #337AB7; font-size: 26px }
 .main-container { padding: 30px; width: 640px; margin: 0 auto }
 form.movie-search-form { margin: 20px 0 }
 
+ul.top-nav { list-style-type: none; padding: 0 }
+ul.top-nav li { display: inline-block; }
+
 ul#search-results-list { list-style-type: none; margin: 0; padding: 0 }
 ul#search-results-list h2 {
   color: #AB6A38;
